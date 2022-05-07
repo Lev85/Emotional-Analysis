@@ -1,0 +1,588 @@
+---
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+date: "22 de febrero de 2020"
+editor_options:
+  chunk_output_type: inline
+---
+```{r include=FALSE}
+title_var <- paste0("Analisis Paciente ",pt)
+```
+---
+title: `r title_var`
+---
+
+```{r setup, include=FALSE}
+library(randomForest)
+library(dplyr)
+library(ggplot2)
+library(arm)
+library(DataExplorer)
+library(ggcorrplot)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r tidy=TRUE,results='asis',echo=FALSE}
+cat("  \n# ",pt," - Loading data from patient  \n")
+cat("  \n## Loading algorithm  \n")
+cat("  \n* Filtering data from the patient and remove some NA record/values  \n")
+
+paciente<-pt
+
+datos.paciente<-dnm[dnm[[var_id]]==paciente,]
+#datos.paciente<-filter(dnm, D_id==paciente, !is.na(S_filename), !is.na(D_start))
+#datos.paciente<-filter(dnm, D_id==paciente, !is.na(S_night_number), !is.na(D_start))
+#datos.paciente<-filter(dnm, A_id==paciente, !is.na(S_night_number), !is.na(D_time_start_form))
+
+cat("  \n## Observations by diagnosis  \n")
+
+#datos.pt<-dnm[dnm[[var_id]]==pt & dnm$B_I_NAfilled!="I",]
+datos.pt<-dnm[dnm[[var_id]]==pt,]
+
+#plot(as.factor(datos.paciente[[var_diagnosis]]), main="diagnosis with no NA's")
+plot(as.factor(datos.pt[[vgn_short_diagnosis]]), main="diagnosis with no NA's")
+#stop()
+
+```
+\vspace{10mm}
+
+\pagebreak
+
+
+```{r eval=var_plots, tidy=TRUE,warning=FALSE,message=FALSE, out.height="250px",out.width="300px",fig.align='center',results='asis',echo=FALSE}
+
+cat("  \n# ",pt," - Daily Form variables  \n")
+
+vars<-colnames(datos.paciente)
+vars<-vars[grepl("^D_*",vars)]
+vars<-sample(vars,5)
+
+
+for(vrb in vars ){
+  print(ggplot(datos.paciente) + geom_point(aes_string(x=var_date,y=vrb,colour=var_diagnosis)) + stat_smooth(aes_string(x=var_date,y=vrb),level=0.5))
+  
+}
+
+
+```
+\vspace{10mm}
+
+
+```{r eval=var_plots,tidy=TRUE, warning=FALSE,message=FALSE, out.height="250px",out.width="300px",fig.align='center',results='asis',echo=FALSE}
+
+cat("  \n# ",pt," - Smartwatch variables  \n")
+
+vars<-colnames(datos.paciente)
+vars<-vars[grepl("^S_*",vars)]
+vars<-sample(vars,5)
+
+
+for(vrb in vars ){
+  print(ggplot(datos.paciente) + geom_point(aes_string(x=var_date,y=vrb,colour=var_diagnosis)) + stat_smooth(aes_string(x=var_date,y=vrb),level=0.5))
+  
+}
+
+cat("\\pagebreak")
+
+#stop()
+```
+\vspace{10mm}
+
+
+```{r warning=FALSE,eval=TRUE,results='asis',echo=FALSE}
+# Preparamos datos para ANALISIS
+
+dfetsel<-datos.paciente
+
+
+
+# Remove columns with any NA values
+dfetsel<-dfetsel[ , colSums(is.na(dfetsel)) == 0]
+
+# Keeping only numeric variables
+vte<-names(which(sapply(dfetsel,is.numeric)))
+dfetsel<-dfetsel[,vte]
+  
+
+list_featselalg<<-vector(mode = "list")
+
+```
+
+```{r warning=FALSE,eval=var_featselProc,results='asis',echo=FALSE}
+cat("  \n# ",pt," - Feature Selection Algorithms  \n")
+
+#corval<-read.csv(file="fetselv3.csv",header=TRUE,sep=";",stringsAsFactors = FALSE)
+corval<-read.csv(file="FeatureSelection/fetselv4.csv",header=TRUE,sep=",",stringsAsFactors = FALSE)
+corval<-filter(corval, id==pt, !var.x %in%  colsToExclude)
+
+
+cat("  \n* Variables : ", ncol(dfetsel),"  \n")
+cat("  \n* Observations : ", nrow(dfetsel),"  \n")
+cat("  \n")
+
+first<-TRUE
+
+for (alg in featselalg ) {
+  
+    if (first) {
+      first<-FALSE
+    } else {
+      cat("\\pagebreak")
+    }
+  
+    cat("  \n## Algorithm ",alg,"  \n")
+    
+    fun_name<-paste0("fun_",tolower(alg))
+    if (alg %in% c("CORR","CHI","ANOVA")){
+      #get(fun_name)(dcorval,ind_var)
+      vxx<-paste0("antes de llamar a correlation ",fun_name)
+      get(fun_name)(corval,ind_var)
+    } else {
+      get(fun_name)(dfetsel,ind_var)
+    }
+    
+}
+list_featsel[[pt]]<-list_featselalg
+v_featsel<-as.character()
+
+for ( nam in names(list_featsel[[pt]]) ){
+  
+  if (is.null(names(list_featsel[[pt]][[nam]]))){
+    names(list_featsel[[pt]][[nam]])<-list_featsel[[pt]][[nam]]
+  }
+  
+  v_featsel<-c(v_featsel,names(list_featsel[[pt]][[nam]]))
+  
+}
+
+un_featsel<-unique(v_featsel)
+s<-0
+
+for ( nam in names(list_featsel[[pt]]) ){
+  v_iscont<-as.numeric()
+  s<-s+1;
+  
+  for (fs in un_featsel) {
+    if (is.element(fs,names(list_featsel[[pt]][[nam]]))){
+      v_iscont<-c(v_iscont,1)
+    } else {
+      v_iscont<-c(v_iscont,0)
+    }
+  }
+  
+  if (s==1){
+    df_featsel<-as.data.frame(v_iscont)
+    }
+  else {
+    df_featsel<-cbind(df_featsel,v_iscont) 
+  }
+  names(df_featsel)[s]<-paste0(s,"º")
+}
+ 
+
+df_featsel<-cbind(df_featsel, Tot = rowSums(df_featsel))
+rownames(df_featsel)<-un_featsel
+
+assign(paste0("dffetSel",paciente),df_featsel)
+list_featselPatient[[paciente]]<-get(paste0("dffetSel",paciente))
+
+cat("\\pagebreak")
+```
+
+```{r tidy=TRUE, eval=var_featselProc | var_featselSumm, results='asis',echo=FALSE }
+
+if (!exists(paste0("dffetSel",paciente))){
+  load("featSel.RData")
+  df_topfeatsel<-list_featselPatient[[paciente]]
+} else {
+  df_topfeatsel<-get(paste0("dffetSel",paciente))
+}
+df_topfeatsel<-df_topfeatsel[order(-df_topfeatsel$Tot),]
+
+```
+
+```{r tidy=TRUE, eval=var_featselSumm, results='asis',echo=FALSE }
+
+cat("  \n# ",paciente," - Feature Selection Summary  \n")
+cat("  \nThis section shows all the variables selected for all algorithms.  \n")
+cat("  \nThere is one column for each algorithm.  \n")
+cat("  \nThe value 1 means that the variable is important for the algorithm.  \n")
+kable(df_topfeatsel)
+cat("\\pagebreak")
+
+```
+
+```{r eval=var_featselSumm, results='asis',echo=FALSE, tidy=TRUE,warning=FALSE,message=FALSE,fig.height = 8, fig.width = 9,fig.align='center'}
+
+varsToShow<-nrow(df_topfeatsel)
+if (varsToShow>0){
+  
+  if (varsToShow==1) vToShow<-1
+  else if (varsToShow<10) vToShow<-varsToShow
+  #else vToShow<-ceiling(nrow(df_topfeatsel)*0.25)
+  else vToShow<-15
+  
+  vrsplot<-rownames(df_topfeatsel)[1:vToShow]
+  #vrsplot<-c("S_wakeup","S_dur_day_min","S_dur_spt_min","S_sleep_efficiency","D_irritability","D_motivation","Z_dx_numeric")
+  #datacorrplot<-datos.paciente[,rownames(df_topfeatsel)[1:15]]
+  datacorrplot<-datos.paciente[,vrsplot]
+
+  
+  cat("  \n# ",paciente," - Correlation Matrix with Feature Selection variables  \n")
+  
+  plot_correlation(datacorrplot, cor_args = list( 'use' = 'complete.obs'))
+				                   
+  cat("\\pagebreak")
+}
+
+```
+
+
+```{r tidy=TRUE, eval=var_pca, results='asis',echo=FALSE,fig.height = 3, fig.width = 6 }
+
+na.interpolation3<-function(x){
+	if (all(is.na(x))) {
+		x<-0		
+	} else {
+		x<-na_interpolation(x)
+	}
+
+}
+
+dfetselpca<-dfetsel[, !names(dfetsel) %in% var_id]
+
+cat("  \n# ",paciente," - Principal Component Analysis  \n")
+
+a<-data.frame(lapply(dfetselpca,na.interpolation3))
+a<-prcomp(a)
+
+prop_varianza <- a$sdev^2 / sum(a$sdev^2)
+
+cat("  \n## PCA Explained Variance  \n")
+
+#biplot(x = a, scale = 0, cex = 0.6, choices = 3:4)
+pca_displayed<-10
+ggplot(data = data.frame(prop_varianza[1:pca_displayed], pc = 1:pca_displayed),
+       aes(x = pc, y = prop_varianza[1:pca_displayed])) +
+  geom_col(width = 0.6) +
+  scale_y_continuous(limits = c(0,1)) +
+  scale_x_continuous(breaks = 1:pca_displayed) +
+  theme_bw() +
+  labs(x = "Principal Component",
+       y = "Covered variance")
+
+cat("  \n")
+cat("  \n## Acumulated Covered Variance  \n")
+
+prop_varianza_acum <- cumsum(prop_varianza)
+
+ggplot(data = data.frame(prop_varianza_acum[1:pca_displayed], pc = 1:pca_displayed),
+       aes(x = pc, y = prop_varianza_acum[1:pca_displayed], group = 1)) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = 1:pca_displayed) +
+  theme_bw() +
+  labs(x = "Principal Component",
+       y = "Accumulated Covered Variance")
+cat("\\pagebreak")
+
+```
+
+```{r tidy=TRUE, eval=var_pca, results='asis',echo=FALSE }
+rounded<-1
+cat("  \n")
+cat("  \n## Weight of sample of variables from ten first principal components  \n")
+pcadf_rotation<-as.data.frame(a$rotation)
+kable(round(head(pcadf_rotation[1:10],10),rounded))
+
+cat("  \n")
+cat("  \n## PCA Values for all observations (sample 10 x 10)  \n")
+pcadf_x<-as.data.frame(a$x)
+kable(round(head(pcadf_x[1:10],10),rounded))
+
+```
+
+
+
+```{r eval=var_pca, results='asis',echo=FALSE, tidy=TRUE,warning=FALSE,message=FALSE,fig.height = 8, fig.width = 9,fig.align='center'}
+
+cat("  \n# ",paciente," - Correlation Matrix with PCA Components  \n")
+plot_correlation(pcadf_x, cor_args = list( 'use' = 'complete.obs'))
+
+```
+
+```{r tidy=TRUE, eval=var_ml_allvars | var_ml_fsvars, echo=FALSE,}
+
+datos.paciente$D_date<-as.numeric(format(datos.paciente$D_date,format="%y%m%d"))
+
+# Almacenamos en datos.entreno un 70% de observaciones para entrenar modelo
+# Almacenamos en datos.test un 30% de observaciones para predecir
+
+#tamano.total <- nrow(datos.paciente)
+#tamano.entreno <- round(tamano.total*0.7)
+#datos.indices <- sample(1:tamano.total , size=tamano.entreno) 
+#datos.entreno <- datos.paciente[datos.indices,]
+#datos.test <- datos.paciente[-datos.indices,]
+
+data.ind<-datos.paciente
+
+data.ind[[var_diagnosis]]<-as.factor(data.ind[[var_diagnosis]])
+
+rownames(data.ind) <- NULL
+
+in_ent<-as.numeric()
+in_tst<-as.numeric()
+
+for (pt2 in unique(data.ind[[var_diagnosis]])){
+
+	dfdg<-data.ind[data.ind[[var_diagnosis]]==pt2,]
+	ind.class<-as.numeric(rownames(dfdg))
+	tt.class<-length(ind.class)
+	
+	if (tt.class>2){
+    te.class <- round(tt.class*0.7)
+    ind.ent.class <- sample(ind.class , size=te.class) 
+		in_ent<-c(in_ent,ind.ent.class)
+		in_tst<-c(in_tst,ind.class[!ind.class %in% ind.ent.class])
+	}
+	else if (tt.class==2) {
+		in_ent<-c(in_ent,ind.class)
+		in_tst<-c(in_tst,ind.class[1])	
+	}
+  else if (tt.class==1) {
+		in_ent<-c(in_ent,rep(ind.class,2))
+		in_tst<-c(in_tst,ind.class)	
+  }
+	
+}
+
+
+datos.entreno.all <- data.ind[in_ent,]
+datos.test.all <- data.ind[in_tst,]
+
+
+```
+
+
+```{r tidy=TRUE, eval=var_ml_allvars, echo=FALSE,results='asis'}
+
+cat("  \n# ",paciente," - Machine Learning Analysis  \n")
+
+cat("  \n## Preparing data for Algorithms - ALL VARIABLES \n")
+
+ind_ml<-"ALL"
+
+datos.entreno<-datos.entreno.all
+datos.test<-datos.test.all
+
+# Quitamos variables que son NA a nivel de estado
+cv<-as.character()
+cv1<-as.numeric() #Columnas duplicadas
+#stop()
+for (cn in colnames(datos.entreno)){
+
+  #No vamos a contar la variable de diagnostico
+  if (cn==var_diagnosis) next
+  
+  n=0
+  y=0
+  
+  #Recorremos los distintos valores de la variabe diagnostico 
+  for (xn in unique(datos.entreno[[var_diagnosis]])){
+    
+    #Generamos dataframe solo con registros del diagnostico 
+    dfx<-datos.entreno[datos.entreno[[var_diagnosis]]==xn,]
+    
+    #Identificamos columnas repetidas por diagnostico
+    cv1<-c(cv1,which(!duplicated(as.list(dfx)) %in% FALSE))
+
+    # Contamos todos los casos en los que son puros NA
+    if (nrow(dfx)==sum(is.na(dfx[[cn]])))  n=n+1
+
+        # Contamos los casos en los que solo hay un único valor
+    if (length(unique(dfx[[cn]]))==1) y=y+1
+
+  }
+  
+  # Guardamos en un vector, todos aquellos que son puros NA, o solo tienen un solo valor
+  #if (n>=1 | y == length(unique(datos.entreno[[var_diagnosis]]))){
+  if (n>=1 | y >= 1){
+    cv<-c(cv,cn)
+  }
+  
+}
+# Porsiacaso alguna variable se repite
+cv<-unique(cv)
+colduplicadas<-colnames(datos.entreno)[cv1]
+
+
+# Quitamos las variables
+datos.entreno<-datos.entreno[, !names(datos.entreno) %in% c(cv,colduplicadas)]
+datos.test<-datos.test[, !names(datos.test) %in% c(cv,colduplicadas)] 
+
+
+
+# Quitamos la variable D_date que da problemas para ld_script
+datos.entreno<-datos.entreno[, !names(datos.entreno) %in% c(var_date,"S_filename")]
+datos.test<-datos.test[, !names(datos.test) %in% c(var_date,"S_filename")] 
+
+
+cat("  \n* Trainning data is built by select randomly 70% of total observations  \n")
+cat("  \n  + Observations in Trainning data : ", nrow(datos.entreno),"  \n")
+
+
+cat("  \n* Test data is built by select randomly 30% of total observations  \n")
+cat("  \n  + Observations in Test data : ", nrow(datos.test),"  \n")
+
+cat("\\pagebreak")
+```
+
+
+```{r child='svm_script.Rmd',eval=if (var_ml_allvars & var_ml_svm) TRUE else FALSE }
+```
+
+```{r child='rf_script.Rmd',eval=if (var_ml_allvars & var_ml_rf) TRUE else FALSE }
+```
+
+```{r child='knn_script.Rmd',eval=if (var_ml_allvars & var_ml_knn) TRUE else FALSE }
+```
+
+```{r child='dt_script.Rmd',eval=if (var_ml_allvars & var_ml_dt) TRUE else FALSE }
+```
+
+```{r child='ld_script.Rmd',eval=if (var_ml_allvars & var_ml_ld) TRUE else FALSE }
+```
+
+```{r child='lda_script.Rmd',eval=if (var_ml_allvars & var_ml_lda) TRUE else FALSE }
+```
+
+```{r child='qda_script.Rmd', eval=if (var_ml_allvars & var_ml_qda) TRUE else FALSE }
+```
+
+```{r child='reglin_script.Rmd', eval=if (var_ml_allvars & var_ml_reglin)  TRUE else FALSE }
+```
+
+```{r child='reglog_script.Rmd', eval=if (var_ml_allvars & var_ml_reglog)  TRUE else FALSE }
+```
+
+```{r child='reglogbay_script.Rmd', eval=if (var_ml_allvars & var_ml_reglogbay) TRUE else FALSE }
+```
+
+
+
+```{r tidy=TRUE, eval=var_ml_fsvars, echo=FALSE,results='asis'}
+
+cat("  \n# ",paciente," - Machine Learning Analysis  \n")
+
+cat("  \n## Preparing data for Algorithms - FEATURE SELECTION VARIABLES \n")
+ind_ml<-"FS"
+lvlrank=3
+
+datos.entreno<-datos.entreno.all
+datos.test<-datos.test.all
+
+
+#datos.paciente$D_date<-as.numeric(format(datos.paciente$D_date,format="%y%m%d"))
+
+
+# Seleccionamos solo las variables de Feature Selection
+#datos.paciente <-  datos.paciente [,c(rownames(df_topfeatsel[df_topfeatsel$Tot >=lvlrank, ]),var_diagnosis)]
+
+datos.entreno <-  datos.entreno [,c(rownames(df_topfeatsel[df_topfeatsel$Tot >=lvlrank, ]),var_diagnosis)]
+datos.test <-  datos.test [,c(rownames(df_topfeatsel[df_topfeatsel$Tot >=lvlrank, ]),var_diagnosis)]
+
+
+# Quitamos variables que son NA a nivel de estado
+cv<-as.character()
+cv1<-as.numeric() #Columnas duplicadas
+for (cn in colnames(datos.entreno)){
+
+  #No vamos a contar la variable de diagnostico
+  if (cn==var_diagnosis) next
+  
+  n=0
+  y=0
+  
+  #Recorremos los distintos valores de la variabe diagnostico 
+  for (xn in unique(datos.entreno[[var_diagnosis]])){
+    
+    #Generamos dataframe solo con registros del diagnostico 
+    dfx<-datos.entreno[datos.entreno[[var_diagnosis]]==xn,]
+    
+    #Identificamos columnas repetidas por diagnostico
+    cv1<-c(cv1,which(!duplicated(as.list(dfx)) %in% FALSE))
+
+    # Contamos todos los casos en los que son puros NA
+    if (nrow(dfx)==sum(is.na(dfx[[cn]])))  n=n+1
+
+        # Contamos los casos en los que solo hay un único valor
+    if (length(unique(dfx[[cn]]))==1) y=y+1
+
+  }
+  
+  # Guardamos en un vector, todos aquellos que son puros NA, o solo tienen un solo valor
+  #if (n>=1 | y == length(unique(datos.entreno[[var_diagnosis]]))){
+  if (n>=1 | y >= 1){
+    cv<-c(cv,cn)
+  }
+  
+}
+# Porsiacaso alguna variable se repite
+cv<-unique(cv)
+colduplicadas<-colnames(datos.entreno)[cv1]
+
+
+# Quitamos las variables
+datos.entreno<-datos.entreno[, !names(datos.entreno) %in% c(cv,colduplicadas)]
+datos.test<-datos.test[, !names(datos.test) %in% c(cv,colduplicadas)] 
+
+
+
+# Quitamos la variable D_date que da problemas para ld_script
+datos.entreno<-datos.entreno[, !names(datos.entreno) %in% c("D_date","S_filename")]
+datos.test<-datos.test[, !names(datos.test) %in% c("D_date","S_filename")] 
+
+
+cat("  \n* Trainning data is built by select randomly 70% of total observations  \n")
+cat("  \n  + Observations in Trainning data : ", nrow(datos.entreno),"  \n")
+
+
+cat("  \n* Test data is built by select randomly 30% of total observations  \n")
+cat("  \n  + Observations in Test data : ", nrow(datos.test),"  \n")
+
+cat("\\pagebreak")
+```
+
+
+```{r child='svm_script.Rmd',eval=if (var_ml_fsvars & var_ml_svm) TRUE else FALSE }
+```
+
+```{r child='rf_script.Rmd',eval=if (var_ml_fsvars & var_ml_rf) TRUE else FALSE }
+```
+
+```{r child='knn_script.Rmd',eval=if (var_ml_fsvars & var_ml_knn) TRUE else FALSE }
+```
+
+```{r child='dt_script.Rmd',eval=if (var_ml_fsvars & var_ml_dt) TRUE else FALSE }
+```
+
+```{r child='ld_script.Rmd',eval=if (var_ml_fsvars & var_ml_ld) TRUE else FALSE }
+```
+
+```{r child='lda_script.Rmd',eval=if (var_ml_fsvars & var_ml_lda) TRUE else FALSE }
+```
+
+```{r child='qda_script.Rmd', eval=if (var_ml_fsvars & var_ml_qda) TRUE else FALSE }
+```
+
+```{r child='reglin_script.Rmd', eval=if (var_ml_fsvars & var_ml_reglin)  TRUE else FALSE }
+```
+
+```{r child='reglog_script.Rmd', eval=if (var_ml_fsvars & var_ml_reglog)  TRUE else FALSE }
+```
+
+```{r child='reglogbay_script.Rmd', eval=if (var_ml_fsvars & var_ml_reglogbay) TRUE else FALSE }
+```
+
+

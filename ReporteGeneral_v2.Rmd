@@ -1,0 +1,231 @@
+---
+title: "General"
+author: "Pavel"
+date: "22 de marzo de 2020"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+  html_document: default
+---
+
+```{r include=FALSE, eval=TRUE}
+options(knitr.duplicate.label = 'allow')
+Sys.setlocale("LC_ALL", "English")
+library(rmarkdown)
+library(knitr)
+library(randomForest)
+library(dplyr)
+library(ggplot2)
+library(arm)
+library(e1071)
+library(class)
+library(rpart)
+library(glmnet)
+library(data.table)
+library(flextable)
+library(imputeTS)
+```
+
+
+
+```{r include=FALSE, eval=TRUE}
+load("dnormalizado4.RData")
+dnm<-dftotal
+
+var_id<-"A_id"
+var_date<-"A_date"
+#var_numeric_diagnosis<-vgn_diagnosis
+#var_short_diagnosis<-vgn_prev_diagnosis
+  
+#dnm[[var_diagnosis]]<-dnm[[var_prev_diagnosis]]
+#dnm[[var_prev_diagnosis]]<-NULL
+
+
+if (ind_mode==2) {
+  dnm[[vgn_diagnosis]]<-ifelse(round(dnm[[vgn_diagnosis]]/2)<2,"No Irritated","Irritated")
+}
+
+```
+
+
+```{r include=FALSE, eval=TRUE}
+# Preparación de datos a nivel general
+
+
+# Seleecionamos Reales o Todo 
+if (boo_soloReales){
+  # datos.paciente<-dnm[dnm[[var_id]]==pt & 
+  #                     dnm$B_I_NAfilled %in% c("REAL") & 
+  #                     dnm$B_S_NAfilled %in% c("REAL") & 
+  #                     dnm$B_D_NAfilled %in% c("REAL") &
+  #                     dnm$B_H_NAfilled %in% c("REAL") &
+  #                     dnm$B_Y_NAfilled %in% c("REAL"),]    
+  
+  for (vt in vartypes)
+    dnm<-dnm[dnm[[paste0("B_",vt,"_NAfilled")]] %in% c("REAL"),]
+
+    
+  
+} else {
+
+  # datos.paciente<-dnm[dnm[[var_id]]==pt & 
+  #                     dnm$B_I_NAfilled %in% c("REAL","I") & 
+  #                     dnm$B_S_NAfilled %in% c("REAL","S") & 
+  #                     dnm$B_D_NAfilled %in% c("REAL","D"),]
+  
+  for (vt in vartypes)
+    dnm<-dnm[dnm[[paste0("B_",vt,"_NAfilled")]] %in% c("REAL",vt),]
+  
+  
+}
+
+
+# Exclusión de variables a nivel general
+vrs<-colnames(dnm)
+
+
+# Guardamos nombre de variables con las que vamos a trabajar
+vrsel<-as.character()
+for (vt in c("A",vartypes)) vrsel<-c(vrsel,vrs[grepl(paste0("^",vt),vrs)])
+
+# Añadimos variables necesarios: target y descripcion
+vrsel<-c(vrsel,ind_var)
+vrsel<-c(vrsel,vgn_short_diagnosis)
+#stop()
+# Seleccionamos dichas variables
+dnm<-dnm[,vrsel]
+
+# Convertimos variables de caracteres a numericas
+cat("  \n* Transform string variables to numeric  \n")
+for ( x in colnames(dnm)){
+  if( !x %in% c(var_id,vgn_short_diagnosis) & class(dnm[[x]])=="character"){
+    dnm[[x]]<-as.numeric(as.factor(dnm[[x]]))
+  }
+}
+
+
+
+
+eventsColsToExclude<-vrs[grepl('^E_',vrs)]
+controlColsToExclude<-vrs[grepl('^B_',vrs)]
+
+interventionsColsToExclude<-vrs[grepl('^I_',vrs)]
+hrsdColsToExclude<-vrs[grepl('^H_',vrs)]
+youngColsToExclude<-vrs[grepl('^Y_',vrs)]
+
+smartWatchColsToExclude<-c("S_week","S_night_number","S_filename")
+otherColsToExclude<-c("Y_score","H_score","I_therapist","D_slowness_fill_form","D_slowness_fill_form_no_outliers")
+
+colsToExclude<-c(eventsColsToExclude,
+                 controlColsToExclude,
+                 #interventionsColsToExclude,
+                 #hrsdColsToExclude,
+                 #youngColsToExclude,
+                 smartWatchColsToExclude,
+                 otherColsToExclude)
+
+
+
+vrsel<-vrsel[!vrsel %in% colsToExclude]
+
+# Quitamos posibles duplicados
+vrsel<-unique(vrsel)
+  
+
+dnm<-dnm[,vrsel]
+#stop()
+
+```
+
+
+```{r include=FALSE, eval=TRUE}
+
+
+#dfconfidence<-data.frame(patients)
+dfconfidence1<-data.frame(patients)
+dfconfidence2<-data.frame(patients)
+#dfvar<-data.frame()
+dfvar1<-data.frame()
+dfvar2<-data.frame()
+
+rmkformat<-"rmk_pdf_personal_v2.Rmd"
+
+for (pt in patients){
+  personal_file<-paste0("rmk_pdf_",toupper(pt))
+  render(rmkformat,"word_document",output_file=personal_file)
+}
+
+
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# GENERAL REPORT
+
+```{r tidy=TRUE, echo=FALSE}
+plot(as.factor(dnm[[vgn_short_diagnosis]]), main= "Target Variable for all entries")
+
+# Patients in dataset
+unique(dnm[[var_id]])
+```
+\vspace{10mm}
+
+\pagebreak
+
+```{r message=FALSE, eval=var_ml_allvars,echo=FALSE, results='asis'}
+
+dfconfidence1[,2:ncol(dfconfidence1)]<-round(dfconfidence1[,2:ncol(dfconfidence1)],2)
+rownames(dfconfidence1)<-dfconfidence1[,1]
+dfconfidence1<-dfconfidence1[,-1]
+
+t_dfconfidence<-transpose(dfconfidence1)
+colnames(t_dfconfidence)<-rownames(dfconfidence1)
+
+
+algorithm<-colnames(dfconfidence1)
+t_dfconfidence<-cbind(algorithm,t_dfconfidence)
+
+rownames(t_dfconfidence)<-NULL
+
+```
+
+
+```{r message=FALSE, eval=var_ml_allvars,echo=FALSE, results='asis'}
+
+cat("  \n# Machine Learning ALL VARIABLES results  \n")
+cat("  \n#   \n")
+ft<-flextable(t_dfconfidence)
+ft<-autofit(ft)
+ft
+cat("\\pagebreak")
+```
+\vspace{10mm}
+
+
+```{r message=FALSE, eval=var_ml_fsvars,echo=FALSE, results='asis'}
+
+dfconfidence2[,2:ncol(dfconfidence2)]<-round(dfconfidence2[,2:ncol(dfconfidence2)],2)
+rownames(dfconfidence2)<-dfconfidence2[,1]
+dfconfidence2<-dfconfidence2[,-1]
+
+t_dfconfidence<-transpose(dfconfidence2)
+colnames(t_dfconfidence)<-rownames(dfconfidence2)
+
+
+algorithm<-colnames(dfconfidence2)
+t_dfconfidence<-cbind(algorithm,t_dfconfidence)
+
+rownames(t_dfconfidence)<-NULL
+
+```
+
+
+```{r message=FALSE, eval=var_ml_fsvars,echo=FALSE, results='asis'}
+
+cat("  \n# Machine Learning FEATURE SELECTION results  \n")
+cat("  \n#   \n")
+ft<-flextable(t_dfconfidence)
+ft<-autofit(ft)
+ft
+cat("\\pagebreak")
+```
