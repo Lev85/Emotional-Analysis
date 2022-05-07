@@ -1,0 +1,169 @@
+"","id","dx","formulario","pulsera","hrsd","young","intervenciones","observaciones"
+"46","ALPA","Euthymia","FORMULARIO","","","","",68
+"111","ALPA","Euthymia","FORMULARIO","SMARTWATCH","","","",13
+"129","ALPA","Euthymia","FORMULARIO","SMARTWATCH","HRSD","YOUNG","INTERVENCIONES",1
+"146","ALPA","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",2
+"167","ALPA","Euthymia","","","","","INTERVENCIONES",1
+"181","ALPA","Euthymia","","SMARTWATCH","","","",45
+"202","ALPA","Euthymia","","SMARTWATCH","HRSD","YOUNG","INTERVENCIONES",1
+"205","ALPA","Euthymia","","SMARTWATCH","","","INTERVENCIONES",1
+"62","ALPA","Mixed","FORMULARIO","","","","",16
+"91","ALPA","Mixed","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"141","ALPA","Mixed","","","HRSD","YOUNG","",1
+"47","BEPR","Euthymia","FORMULARIO","","","","",43
+"79","BEPR","Euthymia","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"101","BEPR","Euthymia","FORMULARIO","","","","INTERVENCIONES",2
+"112","BEPR","Euthymia","FORMULARIO","SMARTWATCH","","","",12
+"147","BEPR","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",4
+"168","BEPR","Euthymia","","","","","INTERVENCIONES",1
+"182","BEPR","Euthymia","","SMARTWATCH","","","",5
+"163","BEPR","Not Informed","","","HRSD","YOUNG","INTERVENCIONES",1
+"177","BEPR","Not Informed","","","","","INTERVENCIONES",3
+"41","CASGA","Depression","FORMULARIO","","","","",4
+"143","CASGA","Depression","","","HRSD","YOUNG","INTERVENCIONES",1
+"48","CASGA","Euthymia","FORMULARIO","","","","",33
+"148","CASGA","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",2
+"169","CASGA","Euthymia","","","","","INTERVENCIONES",1
+"56","CASGA","Hypomania","FORMULARIO","","","","",7
+"86","CASGA","Hypomania","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"118","CASGA","Hypomania","FORMULARIO","SMARTWATCH","","","",2
+"174","CASGA","Hypomania","","","","","INTERVENCIONES",1
+"190","CASGA","Hypomania","","SMARTWATCH","","","",9
+"63","CASGA","Mixed","FORMULARIO","","","","",21
+"122","CASGA","Mixed","FORMULARIO","SMARTWATCH","","","",13
+"161","CASGA","Mixed","","","HRSD","YOUNG","INTERVENCIONES",4
+"194","CASGA","Mixed","","SMARTWATCH","","","",19
+"144","DOGE","Depression","","","HRSD","YOUNG","INTERVENCIONES",2
+"49","DOGE","Euthymia","FORMULARIO","","","","",15
+"80","DOGE","Euthymia","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",4
+"102","DOGE","Euthymia","FORMULARIO","","","","INTERVENCIONES",1
+"113","DOGE","Euthymia","FORMULARIO","SMARTWATCH","","","",6
+"149","DOGE","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",3
+"170","DOGE","Euthymia","","","","","INTERVENCIONES",1
+"183","DOGE","Euthymia","","SMARTWATCH","","","",25
+"64","DOGE","Mixed","FORMULARIO","","","","",5
+"92","DOGE","Mixed","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"176","DOGE","Mixed","","","","","INTERVENCIONES",1
+"195","DOGE","Mixed","","SMARTWATCH","","","",4
+"68","DOGE","Not Informed","FORMULARIO","","","","",16
+"73","DOGE","Not Informed","FORMULARIO","","HRSD","YOUNG","",1
+"107","DOGE","Not Informed","FORMULARIO","","","","INTERVENCIONES",1
+"208","DOGE","Not Informed","","","","YOUNG","",1
+"42","DOSI","Depression","FORMULARIO","","","","",9
+"76","DOSI","Depression","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"99","DOSI","Depression","FORMULARIO","","","","INTERVENCIONES",1
+"179","DOSI","Depression","","SMARTWATCH","","","",2
+"50","DOSI","Euthymia","FORMULARIO","","","","",39
+"81","DOSI","Euthymia","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",2
+"103","DOSI","Euthymia","FORMULARIO","","","","INTERVENCIONES",1
+"114","DOSI","Euthymia","FORMULARIO","SMARTWATCH","","","",20
+"150","DOSI","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",1
+"184","DOSI","Euthymia","","SMARTWATCH","","","",24
+"203","DOSI","Euthymia","","SMARTWATCH","HRSD","YOUNG","INTERVENCIONES",1
+"206","DOSI","Euthymia","","SMARTWATCH","","","INTERVENCIONES",1
+"57","DOSI","Hypomania","FORMULARIO","","","","",10
+"87","DOSI","Hypomania","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"65","DOSI","Mixed","FORMULARIO","","","","",12
+"93","DOSI","Mixed","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"106","DOSI","Mixed","FORMULARIO","","","","INTERVENCIONES",1
+"123","DOSI","Mixed","FORMULARIO","SMARTWATCH","","","",17
+"133","DOSI","Mixed","FORMULARIO","SMARTWATCH","","","INTERVENCIONES",1
+"196","DOSI","Mixed","","SMARTWATCH","","","",4
+"69","DOSI","Not Informed","FORMULARIO","","","","",10
+"74","DOSI","Not Informed","FORMULARIO","","HRSD","YOUNG","",1
+"95","DOSI","Not Informed","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"125","DOSI","Not Informed","FORMULARIO","SMARTWATCH","","","",8
+"135","DOSI","Not Informed","FORMULARIO","SMARTWATCH","","","INTERVENCIONES",1
+"197","DOSI","Not Informed","","SMARTWATCH","","","",2
+"51","ECSA","Euthymia","FORMULARIO","","","","",60
+"82","ECSA","Euthymia","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"115","ECSA","Euthymia","FORMULARIO","SMARTWATCH","","","",6
+"151","ECSA","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",3
+"185","ECSA","Euthymia","","SMARTWATCH","","","",1
+"204","ECSA","Euthymia","","SMARTWATCH","HRSD","YOUNG","INTERVENCIONES",1
+"58","ECSA","Hypomania","FORMULARIO","","","","",48
+"88","ECSA","Hypomania","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",2
+"119","ECSA","Hypomania","FORMULARIO","SMARTWATCH","","","",10
+"137","ECSA","Hypomania","FORMULARIO","","","YOUNG","",1
+"158","ECSA","Hypomania","","","HRSD","YOUNG","INTERVENCIONES",1
+"191","ECSA","Hypomania","","SMARTWATCH","","","",1
+"43","GIUS","Depression","FORMULARIO","","","","",33
+"77","GIUS","Depression","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",5
+"100","GIUS","Depression","FORMULARIO","","","","INTERVENCIONES",3
+"110","GIUS","Depression","FORMULARIO","SMARTWATCH","","","",26
+"145","GIUS","Depression","","","HRSD","YOUNG","INTERVENCIONES",3
+"180","GIUS","Depression","","SMARTWATCH","","","",35
+"201","GIUS","Depression","","SMARTWATCH","HRSD","YOUNG","INTERVENCIONES",3
+"52","GIUS","Euthymia","FORMULARIO","","","","",2
+"83","GIUS","Euthymia","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"116","GIUS","Euthymia","FORMULARIO","SMARTWATCH","","","",10
+"130","GIUS","Euthymia","FORMULARIO","SMARTWATCH","HRSD","YOUNG","INTERVENCIONES",1
+"152","GIUS","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",3
+"186","GIUS","Euthymia","","SMARTWATCH","","","",2
+"59","GIUS","Hypomania","FORMULARIO","","","","",3
+"159","GIUS","Hypomania","","","HRSD","YOUNG","INTERVENCIONES",1
+"66","GIUS","Mixed","FORMULARIO","","","","",5
+"94","GIUS","Mixed","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",2
+"124","GIUS","Mixed","FORMULARIO","SMARTWATCH","","","",5
+"134","GIUS","Mixed","FORMULARIO","SMARTWATCH","","","INTERVENCIONES",1
+"44","GOMA","Depression","FORMULARIO","","","","",7
+"78","GOMA","Depression","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",2
+"53","GOMA","Euthymia","FORMULARIO","","","","",14
+"153","GOMA","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",1
+"171","GOMA","Euthymia","","","","","INTERVENCIONES",1
+"187","GOMA","Euthymia","","SMARTWATCH","","","",1
+"67","GOMA","Mixed","FORMULARIO","","","","",7
+"162","GOMA","Mixed","","","HRSD","YOUNG","INTERVENCIONES",1
+"70","GOMA","Not Informed","FORMULARIO","","","","",33
+"96","GOMA","Not Informed","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",5
+"108","GOMA","Not Informed","FORMULARIO","","","","INTERVENCIONES",1
+"126","GOMA","Not Informed","FORMULARIO","SMARTWATCH","","","",45
+"136","GOMA","Not Informed","FORMULARIO","SMARTWATCH","","","INTERVENCIONES",2
+"164","GOMA","Not Informed","","","HRSD","YOUNG","INTERVENCIONES",3
+"198","GOMA","Not Informed","","SMARTWATCH","","","",38
+"154","LABA","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",4
+"89","LABA","Hypomania","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"71","LABA","Not Informed","FORMULARIO","","","","",25
+"75","LABA","Not Informed","FORMULARIO","","HRSD","YOUNG","",1
+"97","LABA","Not Informed","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",2
+"109","LABA","Not Informed","FORMULARIO","","","","INTERVENCIONES",2
+"127","LABA","Not Informed","FORMULARIO","SMARTWATCH","","","",12
+"165","LABA","Not Informed","","","HRSD","YOUNG","INTERVENCIONES",1
+"199","LABA","Not Informed","","SMARTWATCH","","","",28
+"155","MAPI","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",5
+"172","MAPI","Euthymia","","","","","INTERVENCIONES",1
+"188","MAPI","Euthymia","","SMARTWATCH","","","",24
+"60","MAPI","Hypomania","FORMULARIO","","","","",12
+"120","MAPI","Hypomania","FORMULARIO","SMARTWATCH","","","",1
+"131","MAPI","Hypomania","FORMULARIO","SMARTWATCH","HRSD","YOUNG","INTERVENCIONES",1
+"192","MAPI","Hypomania","","SMARTWATCH","","","",2
+"72","MAPI","Not Informed","FORMULARIO","","","","",43
+"98","MAPI","Not Informed","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"128","MAPI","Not Informed","FORMULARIO","SMARTWATCH","","","",14
+"142","MAPI","Not Informed","","","HRSD","YOUNG","",1
+"166","MAPI","Not Informed","","","HRSD","YOUNG","INTERVENCIONES",1
+"178","MAPI","Not Informed","","","","","INTERVENCIONES",2
+"200","MAPI","Not Informed","","SMARTWATCH","","","",14
+"45","SAPE","Depression","FORMULARIO","","","","",4
+"54","SAPE","Euthymia","FORMULARIO","","","","",25
+"84","SAPE","Euthymia","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"104","SAPE","Euthymia","FORMULARIO","","","","INTERVENCIONES",2
+"117","SAPE","Euthymia","FORMULARIO","SMARTWATCH","","","",23
+"138","SAPE","Euthymia","FORMULARIO","","","YOUNG","INTERVENCIONES",1
+"139","SAPE","Euthymia","","","HRSD","","",1
+"156","SAPE","Euthymia","","","HRSD","YOUNG","INTERVENCIONES",2
+"173","SAPE","Euthymia","","","","","INTERVENCIONES",2
+"189","SAPE","Euthymia","","SMARTWATCH","","","",10
+"55","SAPE","Hospitalized","FORMULARIO","","","","",6
+"85","SAPE","Hospitalized","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"157","SAPE","Hospitalized","","","HRSD","YOUNG","INTERVENCIONES",1
+"61","SAPE","Hypomania","FORMULARIO","","","","",27
+"90","SAPE","Hypomania","FORMULARIO","","HRSD","YOUNG","INTERVENCIONES",1
+"105","SAPE","Hypomania","FORMULARIO","","","","INTERVENCIONES",2
+"121","SAPE","Hypomania","FORMULARIO","SMARTWATCH","","","",25
+"132","SAPE","Hypomania","FORMULARIO","SMARTWATCH","","","INTERVENCIONES",1
+"140","SAPE","Hypomania","","","HRSD","YOUNG","",1
+"160","SAPE","Hypomania","","","HRSD","YOUNG","INTERVENCIONES",1
+"175","SAPE","Hypomania","","","","","INTERVENCIONES",1
+"193","SAPE","Hypomania","","SMARTWATCH","","","",27
+"207","SAPE","Hypomania","","SMARTWATCH","","","INTERVENCIONES",1
