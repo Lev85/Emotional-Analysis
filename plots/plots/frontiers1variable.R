@@ -1,5 +1,10 @@
-paciente<-"CASGA"
-variable<-"S_dur_spt_min"
+paciente<-"DOSI"
+variable<-"S_sleep_efficiency"
+
+#S_sleeponset
+#S_wakeup
+#S_dur_spt_min
+#S_sleep_efficiency
 
 # Esto se usa solo si ejecutamos desde fuera masivamente
 if (exists("cArgs")) {
@@ -33,7 +38,7 @@ pltpaciente<-switch(paciente,
 pltvariable<-substr(variable,3,nchar(variable))
 
 library(ggplot2)
-load("dnormalizado7.RData")
+load("datosIntegrados/dnormalizado7.RData")
 dnm<-dftotal
 
 Sys.setlocale("LC_TIME", "English")
@@ -145,8 +150,16 @@ plt<-plt +	scale_x_date(date_breaks = "1 month",date_labels = "%b %y")  +
 print(plt)
 
 #library(ggpubr)
-#plt01 <- plt + theme(plot.margin = margin(1,1,1,1, "cm"))
+#plt04 <- plt04 + theme(plot.margin = margin(1,1,1,1, "cm"))
 #plt02 <- plt + theme(plot.margin = margin(1,1,1,1, "cm")) 
 
 
 #ggarrange(plt01,plt02,labels = c("(a)","(b)"),nrow = 2, ncol = 1,font.label = list(size = 28),hjust=-14,vjust=21)
+
+#library(ggpubr)
+# plt01 <- plt + theme(plot.margin = margin(1,1,1,1, "cm")) 
+# plt02 <- plt + theme(plot.margin = margin(1,1,1,1, "cm"))
+# plt03 <- plt + theme(plot.margin = margin(1,1,1,1, "cm"))
+# plt04 <- plt + theme(plot.margin = margin(1,1,1,1, "cm")) 
+# 
+#ggarrange(plt01,plt02,plt03,plt04,labels = c("(A)","(B)","(C)","(D)"),font.label = list(size = 17),hjust=-15,vjust=43.5)

@@ -10,7 +10,7 @@ if (exists("cArgs")) {
 
 Sys.setlocale("LC_TIME", "English")
 
-load("dnormalizado4.RData")
+load("datosIntegrados/dnormalizado4.RData")
 dnm<-dftotal
 
 

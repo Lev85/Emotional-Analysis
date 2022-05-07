@@ -18,7 +18,7 @@ library(dplyr)
 library(ggplot2)
 library(DataExplorer)
 
-load("dnormalizado7.RData")
+load("datosIntegrados/dnormalizado7.RData")
 source("Funciones.R")
 
 

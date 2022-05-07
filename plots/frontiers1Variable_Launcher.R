@@ -1,8 +1,8 @@
 pacientes<-c("GIUS","DOSI","ECSA","ALPA","BEPR","CASGA","GOMA","LABA","MAPI","PELA","PRFE","RIVI","ROCU","SAPE","SEOR","DOGE")
-pacientes<-c("GIUS","SEOR","SAPE","DOSI")
+pacientes<-c("GIUS")
 variables<-c("D_motivation","D_irritability","D_wakeup_time","D_sleep_quality","D_sleep_duration")
 variables<-c("S_sleeponset","S_wakeup","S_dur_spt_min","S_sleep_efficiency")
-variables<-c("S_dur_spt_min")
+#variables<-c("S_wakeup")
 script<-"/frontiers1variable.R"
 
 projectpath<-"D:\\Proyectos\\Pavel_MoodDisorders\\plots"

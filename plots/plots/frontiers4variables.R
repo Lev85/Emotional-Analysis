@@ -11,7 +11,7 @@ if (exists("cArgs")) {
 }
 
 library(ggplot2)
-load("dnormalizado4.RData")
+load("datosIntegrados/dnormalizado4.RData")
 dnm<-dftotal
 
 Sys.setlocale("LC_TIME", "English")
@@ -106,6 +106,9 @@ dplot[,vrs]<-NULL
 dplot<-cbind(dplot,dfscale)
 dplot$S_sleep_efficiency<-ifelse(-5>dplot$S_sleep_efficiency,-5,dplot$S_sleep_efficiency)
 
+#dplot<-dplot[dplot[[var_date]]<as.Date("2018-06-30"),]
+#dplot<-dplot[dplot[[var_date]]>as.Date("2018-03-20"),]
+
 df1<-dplot[,c(var_diagnosis,var_date,vrs)]
 #df1<-datos.paciente[,c(var_diagnosis,var_date,vrs)]
 
@@ -122,20 +125,21 @@ df1<-unique(df1)
 
   plt<-ggplot(dplot,aes_string(var_date)) + 	
   ggtitle(paste0("Patient: ",pltpaciente)) +
-  #geom_line(aes_string(y=vrs[1],colour="vrs[1]"),size=0.6) + 
-  geom_point(aes_string(y=vrs[1],colour="vrs[1]"),size=0.5) +
-  #geom_line(aes_string(y=vrs[2],colour="vrs[2]"),size=0.6) + 
-  geom_point(aes_string(y=vrs[2],colour="vrs[2]"),size=0.5) +
+  #geom_line(aes_string(y=vrs[1],colour="vrs[1]"),size=0.05) + 
+  #geom_point(aes_string(y=vrs[1],colour="vrs[1]"),size=0.5) +
+  #geom_line(aes_string(y=vrs[2],colour="vrs[2]"),size=0.05) + 
+  #geom_point(aes_string(y=vrs[2],colour="vrs[2]"),size=0.5) +
   labs(x = "Monitoring dates") +
   labs(y = "Variable values scaled [-5,+5]") +
   scale_color_discrete(
     name = "Variables", 
-    labels = c(vrs[1],vrs[2])
+    #labels = c(vrs[1],vrs[2])
+    labels = c(vrs[2],vrs[1])
   ) +
   #stat_smooth(data = dplot,aes_string(x=var_date,y=vrs[1],colour="vrs[1]"),level=0) +
   #stat_smooth(data = dplot,aes_string(x=var_date,y=vrs[2],colour="vrs[2]"),level=0) +
-  geom_smooth(data = dplot,aes_string(x=var_date,y=vrs[1],colour="vrs[1]"),span = 0.2,se=F) +
-  geom_smooth(data = dplot,aes_string(x=var_date,y=vrs[2],colour="vrs[2]"),span = 0.2,se=F) +
+  geom_smooth(data = dplot,aes_string(x=var_date,y=vrs[1],colour="vrs[1]"),span=0.1,size=1,se=T) +
+  geom_smooth(data = dplot,aes_string(x=var_date,y=vrs[2],colour="vrs[2]"),span=0.1,size=1,se=T) +
   geom_rect(
     data = df1, 
     aes(xmin = start, 
@@ -154,12 +158,13 @@ df1<-unique(df1)
   theme(
     legend.position="bottom",
     legend.box="vertical", 
-    legend.title=element_text(size=15,face="bold"),
-    legend.text=element_text(size=13),
-    axis.text.y = element_text(face="bold", size=13), 
-    axis.text.x = element_text(angle = 90, hjust = 1,face="bold", size=13),
-    axis.title.x= element_text(size=13),
-    axis.title.y= element_text(size=13)) +
+    legend.title=element_text(size=24,face="bold"),
+    legend.text=element_text(size=30),
+    axis.text.y = element_text(face="bold", size=18), 
+    axis.text.x = element_text(angle = 70, hjust = 1,face="bold", size=18),
+    axis.title.x= element_text(size=18,face="bold"),
+    axis.title.y= element_text(size=18,face="bold"),
+    ) +
   guides(color = guide_legend(order=1))
 
 #print (plt)

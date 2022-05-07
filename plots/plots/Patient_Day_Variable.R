@@ -29,7 +29,7 @@ library(ggplot2)
 #asignamos el tipo fecha
 #dftotal$A_date<-as.Date(dftotal$A_date)
 
-load("dnormalizado7.RData")
+load("datosIntegrados/dnormalizado7.RData")
 
 #Generamos variables que usaremos en el plot
 pltpaciente<-switch(paciente,

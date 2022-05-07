@@ -1,5 +1,5 @@
 library(dplyr)
-library(tidyr)
+#library(tidyr)
 library(lubridate)
 library(boot)
 
@@ -47,7 +47,7 @@ pltvariable<-substr(vars,3,nchar(vars))
 #dftotal$A_date<-as.Date(dftotal$A_date)
 
 #Leyendo el Rdata
-load("dnormalizado7.RData")
+load("datosIntegrados/dnormalizado7.RData")
 
 #+ results='hide', message=FALSE
 Sys.setlocale("LC_ALL", "English")
