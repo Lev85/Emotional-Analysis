@@ -1,0 +1,96 @@
+---
+title: "Feature Selection"
+author: "PLL"
+date: "17 de mayo de 2020"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+  html_document: default
+---
+
+```{r results='asis',echo=FALSE,warning=FALSE}  
+
+cat("  \n## PATIENT ",pt,"  \n")
+cat("  \n####### Variables : ", ncol(dfetsel),"  \n")
+cat("  \n####### Observations : ", nrow(dfetsel),"  \n")
+cat("  \n")
+
+first<-TRUE
+
+for (alg in featselalg ) {
+  
+    if (first) {
+      first<-FALSE
+    } else {
+      cat("\\pagebreak")
+    }
+  
+    cat("  \n### Algorithm ",alg,"  \n")
+    
+    fun_name<-paste0("fun_",tolower(alg))
+    if (alg %in% c("CORR","CHI","ANOVA")){
+      get(fun_name)(dcorval,ind_var)
+    } else {
+      get(fun_name)(dfetsel,ind_var)
+    }
+    
+}
+list_featsel[[pt]]<-list_featselalg
+v_featsel<-as.character()
+
+for ( nam in names(list_featsel[[pt]]) ){
+  
+  if (is.null(names(list_featsel[[pt]][[nam]]))){
+    names(list_featsel[[pt]][[nam]])<-list_featsel[[pt]][[nam]]
+  }
+  
+  v_featsel<-c(v_featsel,names(list_featsel[[pt]][[nam]]))
+  
+}
+
+un_featsel<-unique(v_featsel)
+s<-0
+
+for ( nam in names(list_featsel[[pt]]) ){
+  v_iscont<-as.numeric()
+  s<-s+1;
+  
+  for (fs in un_featsel) {
+    if (is.element(fs,names(list_featsel[[pt]][[nam]]))){
+      v_iscont<-c(v_iscont,1)
+    } else {
+      v_iscont<-c(v_iscont,0)
+    }
+  }
+  
+  if (s==1){
+    df_featsel<-as.data.frame(v_iscont)
+    }
+  else {
+    df_featsel<-cbind(df_featsel,v_iscont) 
+  }
+  names(df_featsel)[s]<-paste0(s,"º")
+}
+ 
+
+df_featsel<-cbind(df_featsel, Tot = rowSums(df_featsel))
+rownames(df_featsel)<-un_featsel
+cat("  \n")
+cat("\\pagebreak")
+cat("  \n")
+cat("  \n## FEATURE SELECTION SUMMARY FOR PATIENT ",pt,"  \n")
+cat("  \n")
+cat("  \n")
+cat("  \n##### This section shows all the variables selected for all algorithms.  \n")
+cat("  \n##### There is one column for each algorithm.  \n")
+cat("  \n##### The value 1 means that the variable is important for the algorithm.  \n")
+cat("  \n")
+kable(df_featsel[order(-df_featsel$Tot),])
+cat("  \n")
+cat("\\pagebreak")
+cat("  \n")
+
+
+
+```
+

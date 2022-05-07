@@ -1,0 +1,125 @@
+---
+title: "Regresion Logistica Bayes"
+author: "Pavel"
+date: "5 de abril de 2020"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+---
+
+# Bayessian Logistic Regression
+
+```{r include=FALSE}
+confidence<-NA
+datos.entreno.alg<-datos.entreno
+datos.test.alg<-datos.test
+```
+
+\vspace{3mm}
+
+__Bayessian Logistic Regression algorith needs matrix as inputs__
+```{r tidy=TRUE}
+# Para la regresión logistica bayesian las variables deben ser númericas
+# Cambiamos la variable diagnosis de factor a numerico
+datos.entreno.alg[[var_diagnosis]]<-as.numeric(as.factor(datos.entreno.alg[[var_diagnosis]]))
+datos.test.alg[[var_diagnosis]]<-as.numeric(as.factor(datos.test.alg[[var_diagnosis]]))
+```
+
+__Bayessian Logistic Regression algorithm uses only dichotomus variable as target variable. So in fuction of the patient, it will be adjusted in order just to get two possible values 1/0__
+
+```{r include=FALSE}
+if (paciente=="MAPI"){
+  # Solo evaluaremos si el estado es No Hipomanía(0) o Hypomania (1)
+  datos.entreno.alg[[var_diagnosis]]<-ifelse(datos.entreno.alg[[var_diagnosis]]==1,1,0)
+  datos.test.alg[[var_diagnosis]]<-ifelse(datos.test.alg[[var_diagnosis]]==1,1,0)
+} else if (paciente=="ECSA"){
+  # Solo evaluaremos si el estado es Euthymia(0) o Hypomania (1)
+  datos.entreno.alg[[var_diagnosis]]<-ifelse(datos.entreno.alg[[var_diagnosis]]==1,1,0)
+  datos.test.alg[[var_diagnosis]]<-ifelse(datos.test.alg[[var_diagnosis]]==1,1,0)
+} else if (paciente=="DOSI"){
+  # Solo evaluaremos si el estado es Depresion(1) o No Depresion (0)
+  datos.entreno.alg[[var_diagnosis]]<-ifelse(datos.entreno.alg[[var_diagnosis]]==-1,1,0)
+  datos.test.alg[[var_diagnosis]]<-ifelse(datos.test.alg[[var_diagnosis]]==-1,1,0)
+} else if (paciente=="CASGA"){
+  #Solo evaluaremos si el estado es Hipomanía (1) o Mixed (0)
+  datos.entreno.alg[[var_diagnosis]]<-ifelse(datos.entreno.alg[[var_diagnosis]]==1,1,0)
+  datos.test.alg[[var_diagnosis]]<-ifelse(datos.test.alg[[var_diagnosis]]==1,1,0) 
+} else if (paciente=="GIUS"){
+  # Solo evaluaremos si el estado es deprimido. Depression (1) , resto(0)
+  datos.entreno.alg[[var_diagnosis]]<-ifelse(datos.entreno.alg[[var_diagnosis]]==-1,1,0)
+  datos.test.alg[[var_diagnosis]]<-ifelse(datos.test.alg[[var_diagnosis]]==-1,1,0)  
+} else if (paciente=="SAPE"){
+  # Solo evaluaremos si el estado es Euthymia (0) o Hypomania (1)
+  datos.entreno.alg[[var_diagnosis]]<-ifelse(datos.entreno.alg[[var_diagnosis]]==1,1,0)
+  datos.test.alg[[var_diagnosis]]<-ifelse(datos.test.alg[[var_diagnosis]]==1,1,0)
+} else if (paciente=="ALPA"){
+  # Solo evaluaremos si el estado es Mixed (1) o Euthymia (0)
+  datos.entreno.alg[[var_diagnosis]]<-ifelse(datos.entreno.alg[[var_diagnosis]]==2,1,0)
+  datos.test.alg[[var_diagnosis]]<-ifelse(datos.test.alg[[var_diagnosis]]==2,1,0)
+} else if (paciente=="DOGE"){
+  # Solo evaluaremos si el estado es Mixed (1) o Euthymia (0)
+  datos.entreno.alg[[var_diagnosis]]<-ifelse(datos.entreno.alg[[var_diagnosis]]==2,1,0)
+  datos.test.alg[[var_diagnosis]]<-ifelse(datos.test.alg[[var_diagnosis]]==2,1,0)
+}
+```
+
+__Creating model__
+```{r tidy=TRUE}
+formula<-as.formula(paste0(var_diagnosis,"~."))
+(modelo_glm<-bayesglm(formula,data=datos.entreno.alg,family=binomial))
+```
+\vspace{10mm}
+
+__Variable importance__
+```{r tidy=TRUE}
+vimp<-as.data.frame(modelo_glm$coefficients)
+vimp[order(vimp$`modelo_glm$coefficients`),,drop=FALSE]
+```
+\vspace{10mm}
+
+
+__Performing predictions__
+```{r tidy=TRUE}
+options(scipen=999)
+predicciones <- predict(modelo_glm, datos.test.alg,type="response")
+predicciones
+```
+\vspace{10mm}
+
+
+__For comparison purposses, predictios are added to test dataset__
+```{r tidy=TRUE}
+datos.test.alg$prediccion_glm <- predicciones
+realvspredict<-datos.test.alg[,c(var_diagnosis,"prediccion_glm")]
+realvspredict
+```
+\vspace{10mm}
+
+
+__Rouding predictions__
+```{r tidy=TRUE}
+realvspredict$prediccion_glm<-round(realvspredict$prediccion_glm)
+realvspredict$correct<-ifelse(realvspredict$prediccion_glm==realvspredict[[var_diagnosis]],"YES","NO")
+realvspredict
+```
+\vspace{10mm}
+
+__Confidence__
+```{r tidy=TRUE}
+confidence<-(nrow(realvspredict[realvspredict$correct=="YES",])/nrow(realvspredict))*100
+confidence
+```
+\vspace{10mm}
+
+```{r include=FALSE}
+
+if (ind_ml=="ALL") {
+dfconfidence1[dfconfidence1$patients==paciente,c("bayes_log_reg")]<-confidence
+dfvar1<-rbind(dfvar1,data.frame(patient=pt,algorithm="bayes_log_reg",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+} else {
+dfconfidence2[dfconfidence2$patients==paciente,c("bayes_log_reg")]<-confidence
+dfvar2<-rbind(dfvar2,data.frame(patient=pt,algorithm="bayes_log_reg",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+}
+```
+
+

@@ -1,0 +1,81 @@
+---
+title: "Linear Regression"
+author: "Pavel"
+date: "4 de abril de 2020"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+---
+
+# Linear Regression
+
+```{r include=FALSE}
+confidence<-NA
+datos.entreno.alg<-datos.entreno
+datos.test.alg<-datos.test
+```
+
+__Linear Regression algorithm needs the target variable to be numeric__
+```{r tidy=TRUE}
+datos.entreno.alg[[var_diagnosis]]<-as.numeric(as.factor(datos.entreno.alg[[var_diagnosis]]))
+datos.test.alg[[var_diagnosis]]<-as.numeric(as.factor(datos.test.alg[[var_diagnosis]]))
+```
+\vspace{10mm}
+
+__Creating model__
+```{r tidy=TRUE}
+formula<-as.formula(paste0(var_diagnosis,"~."))
+(modelo_lm<-lm(formula,data=datos.entreno.alg))
+```
+\vspace{10mm}
+
+__Variables importance__
+```{r tidy=TRUE}
+vimp<-as.data.frame(modelo_lm$coefficients)
+vimp[order(vimp$`modelo_lm$coefficients`),,drop=FALSE]
+```
+\vspace{10mm}
+
+__Performing predictions__
+```{r tidy=TRUE}
+predicciones <- predict(modelo_lm, datos.test.alg)
+predicciones
+```
+\vspace{10mm}
+
+__For comparison purposses, predictios are added to test dataset__
+```{r tidy=TRUE}
+datos.test.alg$prediccion_lm <- predicciones
+realvspredict<-datos.test.alg[,c(var_diagnosis,"prediccion_lm")]
+realvspredict
+```
+\vspace{10mm}
+
+__Rouding__
+```{r tidy=TRUE}
+realvspredict$prediccion_lm<-round(realvspredict$prediccion_lm)
+realvspredict$correct<-ifelse(realvspredict$prediccion_lm==realvspredict[[var_diagnosis]],"YES","NO")
+realvspredict
+```
+\vspace{10mm}
+
+__Confidence__
+```{r tidy=TRUE}
+confidence<-(nrow(realvspredict[realvspredict$correct=="YES",])/nrow(realvspredict))*100
+confidence
+```
+\vspace{10mm}
+
+```{r include=FALSE}
+if (ind_ml=="ALL") {
+dfconfidence1[dfconfidence1$patients==paciente,c("lin_reg")]<-confidence
+dfvar1<-rbind(dfvar1,data.frame(patient=pt,algorithm="lin_reg",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+} else {
+
+dfconfidence2[dfconfidence2$patients==paciente,c("lin_reg")]<-confidence
+dfvar2<-rbind(dfvar2,data.frame(patient=pt,algorithm="lin_reg",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+}
+```
+\vspace{10mm}
+
+\pagebreak

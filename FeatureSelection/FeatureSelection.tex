@@ -1,0 +1,303 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Feature Selection},
+  pdfauthor={Pavel},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Feature Selection}
+\author{Pavel}
+\date{2 de mayo de 2020}
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{patients \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"CASGA"}\NormalTok{, }\StringTok{"DOSI"}\NormalTok{, }\StringTok{"ECSA"}\NormalTok{, }\StringTok{"GIUS"}\NormalTok{, }\StringTok{"MAPI"}\NormalTok{, }\StringTok{"SAPE"}\NormalTok{)}
+\NormalTok{patients \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"CASGA"}\NormalTok{)}
+
+\NormalTok{desired\_length \textless{}{-}}\StringTok{ }\KeywordTok{length}\NormalTok{(patients)}
+\NormalTok{variables\_list \textless{}{-}}\StringTok{ }\KeywordTok{vector}\NormalTok{(}\DataTypeTok{mode =} \StringTok{"list"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{features-selection---by-patient}{%
+\section{FEATURES SELECTION - BY
+PATIENT}\label{features-selection---by-patient}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{for}\NormalTok{ (pt }\ControlFlowTok{in}\NormalTok{ patients)\{}
+ 
+\NormalTok{    dfetsel\textless{}{-}}\KeywordTok{filter}\NormalTok{(dnm, id}\OperatorTok{==}\NormalTok{pt, }\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(filename), }\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(start))}
+\NormalTok{    dfetsel\textless{}{-}}\KeywordTok{rename}\NormalTok{(dfetsel, }\DataTypeTok{diagnosis=}\NormalTok{final\_diagnosis)}
+
+    \CommentTok{\# Remove columns with any NA values}
+\NormalTok{    dfetsel\textless{}{-}dfetsel[ , }\KeywordTok{colSums}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(dfetsel)) }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{]}
+
+    \CommentTok{\# Remove rows with any NA values}
+    \CommentTok{\# dfetsel\textless{}{-}dfetsel[complete.cases(dfetsel), ]}
+    
+    \CommentTok{\# Keeping only numeric variables}
+\NormalTok{    dfetsel\textless{}{-}dfetsel[,}\KeywordTok{names}\NormalTok{(}\KeywordTok{which}\NormalTok{(}\KeywordTok{sapply}\NormalTok{(dfetsel,is.numeric)))]}
+    
+    \CommentTok{\# Removing some irrelevant variables}
+\NormalTok{    dfetsel\textless{}{-}dfetsel[, }\OperatorTok{!}\KeywordTok{names}\NormalTok{(dfetsel) }\OperatorTok{\%in\%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"week"}\NormalTok{,}\StringTok{"night\_number"}\NormalTok{)]}
+
+\NormalTok{    cols\textless{}{-}}\KeywordTok{ncol}\NormalTok{(dfetsel)}
+
+    \KeywordTok{cat}\NormalTok{(}\StringTok{"  }\CharTok{\textbackslash{}n}\StringTok{\#\#PATIENT"}\NormalTok{,pt,}\StringTok{". VARIABLES "}\NormalTok{,cols,}\StringTok{". OBSERVATIONS"}\NormalTok{,}\KeywordTok{nrow}\NormalTok{(dfetsel),}\StringTok{"  }\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+\NormalTok{    control\textless{}{-}}\KeywordTok{rfeControl}\NormalTok{(}\DataTypeTok{functions=}\NormalTok{rfFuncs, }\DataTypeTok{method=}\StringTok{"cv"}\NormalTok{, }\DataTypeTok{number=}\DecValTok{10}\NormalTok{)}
+\NormalTok{    results \textless{}{-}}\StringTok{ }\KeywordTok{rfe}\NormalTok{(dfetsel[,}\DecValTok{1}\OperatorTok{:}\NormalTok{cols}\DecValTok{{-}1}\NormalTok{], dfetsel[,cols], }\DataTypeTok{sizes=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\NormalTok{cols}\DecValTok{{-}1}\NormalTok{), }\DataTypeTok{rfeControl=}\NormalTok{control)}
+    \KeywordTok{print}\NormalTok{(results)}
+    
+    \CommentTok{\# Saving in list the more relevant variables for each patient}
+\NormalTok{    variables\_list[[pt]]\textless{}{-}results}\OperatorTok{$}\NormalTok{optVariables}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\#\#PATIENT CASGA . VARIABLES 116 . OBSERVATIONS 16
+
+Recursive feature selection
+
+Outer resampling method: Cross-Validated (10 fold)
+
+Resampling performance over subset size:
+
+Variables RMSE Rsquared MAE RMSESD RsquaredSD MAESD Selected 0 0.1929 1
+0.1748 0.2077 0 0.1882\\
+1 0.1920 1 0.1738 0.2055 0 0.1871 * 2 0.2307 1 0.2063 0.2522 0 0.2214\\
+3 0.2245 1 0.2065 0.2345 0 0.2143\\
+4 0.2396 1 0.2249 0.2216 0 0.2078\\
+5 0.2336 1 0.2207 0.2233 0 0.2104\\
+6 0.2302 1 0.2155 0.2185 0 0.2050\\
+7 0.2627 1 0.2493 0.2208 0 0.2052\\
+8 0.2844 1 0.2657 0.2362 0 0.2183\\
+9 0.2801 1 0.2649 0.2370 0 0.2180\\
+10 0.2824 1 0.2658 0.2422 0 0.2245\\
+11 0.2882 1 0.2716 0.2400 0 0.2178\\
+12 0.2859 1 0.2662 0.2519 0 0.2294\\
+13 0.2909 1 0.2725 0.2469 0 0.2269\\
+14 0.3041 1 0.2855 0.2583 0 0.2348\\
+15 0.3049 1 0.2874 0.2636 0 0.2417\\
+16 0.3124 1 0.2969 0.2581 0 0.2363\\
+17 0.3142 1 0.2979 0.2607 0 0.2378\\
+18 0.3092 1 0.2949 0.2525 0 0.2356\\
+19 0.3082 1 0.2942 0.2573 0 0.2377\\
+20 0.3139 1 0.2977 0.2601 0 0.2381\\
+21 0.3203 1 0.3032 0.2509 0 0.2281\\
+22 0.3125 1 0.2976 0.2645 0 0.2422\\
+23 0.3110 1 0.2940 0.2663 0 0.2430\\
+24 0.3229 1 0.3049 0.2676 0 0.2428\\
+25 0.3064 1 0.2892 0.2626 0 0.2386\\
+26 0.3148 1 0.2957 0.2670 0 0.2416\\
+27 0.3255 1 0.3034 0.2681 0 0.2437\\
+28 0.3226 1 0.3049 0.2792 0 0.2569\\
+29 0.3154 1 0.2984 0.2778 0 0.2562\\
+30 0.3231 1 0.3054 0.2684 0 0.2470\\
+31 0.3235 1 0.3053 0.2724 0 0.2493\\
+32 0.3230 1 0.3034 0.2627 0 0.2383\\
+33 0.3293 1 0.3107 0.2712 0 0.2517\\
+34 0.3337 1 0.3139 0.2806 0 0.2563\\
+35 0.3213 1 0.3007 0.2761 0 0.2525\\
+36 0.3349 1 0.3153 0.2716 0 0.2484\\
+37 0.3418 1 0.3192 0.2729 0 0.2552\\
+38 0.3392 1 0.3171 0.2674 0 0.2488\\
+39 0.3288 1 0.3056 0.2689 0 0.2451\\
+40 0.3338 1 0.3100 0.2762 0 0.2562\\
+41 0.3422 1 0.3180 0.2706 0 0.2499\\
+42 0.3435 1 0.3235 0.2687 0 0.2482\\
+43 0.3388 1 0.3159 0.2744 0 0.2548\\
+44 0.3475 1 0.3195 0.2696 0 0.2467\\
+45 0.3459 1 0.3218 0.2635 0 0.2418\\
+46 0.3534 1 0.3297 0.2823 0 0.2570\\
+47 0.3540 1 0.3304 0.2769 0 0.2534\\
+48 0.3410 1 0.3185 0.2765 0 0.2528\\
+49 0.3572 1 0.3314 0.2724 0 0.2449\\
+50 0.3603 1 0.3334 0.2714 0 0.2516\\
+51 0.3477 1 0.3201 0.2706 0 0.2500\\
+52 0.3652 1 0.3393 0.2757 0 0.2531\\
+53 0.3714 1 0.3457 0.2740 0 0.2510\\
+54 0.3605 1 0.3352 0.2660 0 0.2443\\
+55 0.3566 1 0.3285 0.2816 0 0.2535\\
+56 0.3641 1 0.3399 0.2777 0 0.2521\\
+57 0.3608 1 0.3345 0.2780 0 0.2531\\
+58 0.3567 1 0.3306 0.2770 0 0.2490\\
+59 0.3589 1 0.3355 0.2687 0 0.2426\\
+60 0.3560 1 0.3327 0.2627 0 0.2401\\
+61 0.3595 1 0.3342 0.2895 0 0.2668\\
+62 0.3690 1 0.3453 0.2677 0 0.2452\\
+63 0.3536 1 0.3315 0.2747 0 0.2501\\
+64 0.3627 1 0.3379 0.2723 0 0.2514\\
+65 0.3630 1 0.3402 0.2648 0 0.2394\\
+66 0.3624 1 0.3374 0.2718 0 0.2466\\
+67 0.3618 1 0.3346 0.2754 0 0.2537\\
+68 0.3623 1 0.3340 0.2777 0 0.2572\\
+69 0.3657 1 0.3409 0.2704 0 0.2492\\
+70 0.3646 1 0.3386 0.2743 0 0.2491\\
+71 0.3726 1 0.3465 0.2758 0 0.2522\\
+72 0.3623 1 0.3386 0.2771 0 0.2547\\
+73 0.3579 1 0.3322 0.2796 0 0.2543\\
+74 0.3661 1 0.3424 0.2832 0 0.2603\\
+75 0.3625 1 0.3380 0.2782 0 0.2560\\
+76 0.3595 1 0.3336 0.2919 0 0.2667\\
+77 0.3813 1 0.3556 0.2870 0 0.2667\\
+78 0.3767 1 0.3518 0.2778 0 0.2564\\
+79 0.3700 1 0.3442 0.2876 0 0.2648\\
+80 0.3781 1 0.3529 0.2839 0 0.2579\\
+81 0.3721 1 0.3463 0.2802 0 0.2554\\
+82 0.3748 1 0.3482 0.2833 0 0.2591\\
+83 0.3846 1 0.3579 0.2865 0 0.2636\\
+84 0.3708 1 0.3432 0.2865 0 0.2578\\
+85 0.3808 1 0.3567 0.2874 0 0.2637\\
+86 0.3724 1 0.3489 0.2824 0 0.2557\\
+87 0.3868 1 0.3586 0.2812 0 0.2575\\
+88 0.3696 1 0.3444 0.2929 0 0.2727\\
+89 0.3747 1 0.3486 0.2942 0 0.2701\\
+90 0.3789 1 0.3523 0.2896 0 0.2638\\
+91 0.3730 1 0.3464 0.2901 0 0.2666\\
+92 0.3695 1 0.3473 0.2913 0 0.2687\\
+93 0.3773 1 0.3506 0.2876 0 0.2645\\
+94 0.3780 1 0.3507 0.2868 0 0.2619\\
+95 0.3722 1 0.3463 0.3004 0 0.2716\\
+96 0.3664 1 0.3427 0.2946 0 0.2693\\
+97 0.3863 1 0.3579 0.2913 0 0.2660\\
+98 0.3742 1 0.3484 0.2952 0 0.2737\\
+99 0.3798 1 0.3541 0.2902 0 0.2670\\
+100 0.3819 1 0.3551 0.2874 0 0.2656\\
+101 0.3828 1 0.3585 0.2875 0 0.2621\\
+102 0.3681 1 0.3459 0.2874 0 0.2622\\
+103 0.3853 1 0.3595 0.2917 0 0.2683\\
+104 0.3788 1 0.3560 0.2859 0 0.2604\\
+105 0.3765 1 0.3525 0.2912 0 0.2644\\
+106 0.3873 1 0.3609 0.2903 0 0.2688\\
+107 0.3755 1 0.3539 0.3003 0 0.2753\\
+108 0.3939 1 0.3667 0.2927 0 0.2662\\
+109 0.3852 1 0.3616 0.3002 0 0.2747\\
+110 0.3909 1 0.3656 0.2964 0 0.2725\\
+111 0.3803 1 0.3572 0.2995 0 0.2733\\
+112 0.3987 1 0.3706 0.2989 0 0.2804\\
+113 0.3780 1 0.3530 0.3064 0 0.2829\\
+114 0.3931 1 0.3673 0.3039 0 0.2820\\
+115 0.3973 1 0.3718 0.3111 0 0.2865
+
+The top 1 variables (out of 1): Nblocks\_TOINday
+
+\hypertarget{features-selection---all-patients}{%
+\section{FEATURES SELECTION - ALL
+PATIENTS}\label{features-selection---all-patients}}
+
+\hypertarget{relevant-variables-for-each-patient}{%
+\subsection{Relevant variables for each
+patient}\label{relevant-variables-for-each-patient}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{variables\_list}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $CASGA
+## [1] "Nblocks_TOINday"
+\end{verbatim}
+
+\end{document}

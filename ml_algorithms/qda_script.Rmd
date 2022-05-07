@@ -1,0 +1,144 @@
+---
+title: "QDA"
+author: "Pavel"
+date: "22 de marzo de 2020"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+---
+# Quadratic Discriminant Analysis
+```{r include=FALSE}
+confidence<-NA
+datos.entreno.alg<-datos.entreno
+datos.test.alg<-datos.test
+
+```
+
+```{r include=FALSE}
+
+#if (paciente=="DOSI"){
+#in_ent<-c(1,6,7,2,5,8,9,14,25,18,15,16,11,21,23,12,13,26,39,38,47,28,32,43,31,42,35,33,36,48,40,27,45)
+#datos.entreno.alg <- data.ind[in_ent,]
+#datos.test.alg <- data.ind[-in_ent,]
+#}
+
+```
+
+```{r include=FALSE}
+# if (paciente=="MAPI"){
+# datos.entreno.alg<- rbind(datos.entreno,datos.test)
+# datos.test.alg <- rbind(datos.entreno,datos.test)
+# }
+
+```
+
+```{r include=FALSE}
+
+if (paciente=="GIUS"){
+  
+datos.entreno.alg[[var_diagnosis]]<-as.character(datos.entreno.alg[[var_diagnosis]])
+datos.test.alg[[var_diagnosis]]<-as.character(datos.test.alg[[var_diagnosis]])  
+
+datos.entreno.alg[datos.entreno.alg[[var_diagnosis]]=="Euthymia" | datos.entreno.alg[[var_diagnosis]]=="Mixed",var_diagnosis]<-"No Depression"
+
+datos.test.alg[datos.test.alg[[var_diagnosis]]=="Euthymia" | datos.test.alg[[var_diagnosis]]=="Mixed",var_diagnosis]<-"No Depression"
+
+} 
+
+```
+
+
+```{r include=FALSE, eval=TRUE}
+
+min_frequency<-min(table(datos.entreno.alg[[var_diagnosis]]))
+pos_diagnosis<-grep(var_diagnosis, colnames(datos.entreno.alg))
+
+# Para que se puede realizar el QDA, 
+# todas las clases deben tener una cantidad de observaciones superior a la cantidad
+# de variables
+# Por eso, cuando cuando la minima cantidad de observaciones para una clase (min_frequency) es menor que la cantidad de variable (sin contar la target variable), entonces solo cogemos las "min_frequency" primeras variables, siendo "min_frequency la cantidad de observaciones
+if (min_frequency < ncol(datos.entreno.alg)-1) {
+datos.entreno.alg<-datos.entreno.alg[,c(1:(min_frequency-1),pos_diagnosis)]
+}
+
+g<-as.numeric(as.factor(datos.entreno.alg[[var_diagnosis]]))
+g<-as.factor(g)
+
+matx<-datos.entreno.alg[,-(ncol(datos.entreno.alg))]
+matx<-as.matrix(matx)
+group.means <- tapply(matx, list(rep(g, ncol(matx)), col(matx)),  mean)
+counts <- as.vector(table(g))
+
+for (i in 1:length(counts)) {
+
+	nk <- counts[i] - 1
+	X <- scale(matx[unclass(g) == i, ], center = group.means[i, ], scale = FALSE)/sqrt(nk)
+	qx <- qr(X)
+
+	if (i==1) ranks<-qx$rank
+	else ranks<-c(ranks,qx$rank)
+
+}
+
+min_rank<-min(ranks)
+
+if (min_rank==0) min_rank=2
+
+datos.entreno.alg<-datos.entreno.alg[,c(1:(min_rank-1),ncol(datos.entreno.alg))]
+datos.test.alg<-datos.test.alg[,c(1:(min_rank-1),ncol(datos.test.alg))]
+
+
+
+```
+
+
+__Quadratic discriminant analysis algorithm needs the target variable to be factor__
+```{r tidy=TRUE}
+datos.entreno.alg[[var_diagnosis]]<-as.factor(datos.entreno.alg[[var_diagnosis]])
+datos.test.alg[[var_diagnosis]]<-as.factor(datos.test.alg[[var_diagnosis]])
+
+datos.entreno.alg.qda<-datos.entreno.alg
+datos.test.alg.qda<-datos.test.alg
+
+```
+\vspace{10mm}
+
+__Creating model__
+```{r tidy=TRUE}
+formula<-as.formula(paste0(var_diagnosis,"~."))
+(modelo_qda<-qda(formula,data=datos.entreno.alg))
+```
+\vspace{10mm}
+
+__Performing predictions__
+```{r tidy=TRUE}
+predicciones <- predict(modelo_qda, datos.test.alg)
+predicciones
+```
+\vspace{10mm}
+
+__Confusion matrix__
+```{r tidy=TRUE}
+(mc<-table(predicciones$class,datos.test.alg[[var_diagnosis]]))
+#(mc <- with(datos.test.alg,table(predicciones$class, diagnosis)))
+
+```
+\vspace{10mm}
+
+__Confidence__
+```{r tidy=TRUE}
+confidence<-100 * sum(diag(mc)) / sum(mc)
+confidence
+```
+
+```{r include=FALSE}
+if (ind_ml=="ALL") {
+dfconfidence1[dfconfidence1$patients==paciente,c("qda")]<-confidence
+dfvar1<-rbind(dfvar1,data.frame(patient=paciente,algorithm="qda",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno.alg$E_diagnosis),collapse=",")))
+} else {
+dfconfidence2[dfconfidence2$patients==paciente,c("qda")]<-confidence
+dfvar2<-rbind(dfvar2,data.frame(patient=paciente,algorithm="qda",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno.alg$E_diagnosis),collapse=",")))  
+  
+}
+```
+\pagebreak

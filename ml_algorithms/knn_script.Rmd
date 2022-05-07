@@ -1,0 +1,55 @@
+---
+title: "kNN"
+author: "Pavel"
+date: "24 de marzo de 2020"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+---
+
+# K-nearest neighbors analysis
+```{r include=FALSE}
+confidence<-NA
+datos.entreno.alg<-datos.entreno
+datos.test.alg<-datos.test
+```
+
+__KNN algorithm needs the target variable to be inputed as a vector in a different parameter__
+```{r tidy=TRUE}
+datos.entreno.alg.knn<-datos.entreno.alg[ , !(names(datos.entreno.alg) %in% var_diagnosis)]
+datos.test.alg.knn<-datos.test.alg[ , !(names(datos.test.alg) %in% var_diagnosis)]
+
+train_category <- datos.entreno.alg[[var_diagnosis]]
+test_category <- datos.test.alg[[var_diagnosis]]
+```
+
+__The function "knn" alrealdy return predictions__
+```{r tidy=TRUE}
+modelo_knn <- knn(datos.entreno.alg.knn,datos.test.alg.knn,cl=train_category,k=3)
+```
+\vspace{10mm}
+
+__Confusion matrix__
+```{r tidy=TRUE}
+#(mc <- with(datos.test.alg,table(modelo_knn, diagnosis)))
+(mc<-table(modelo_knn,datos.test.alg[[var_diagnosis]]))
+```
+\vspace{10mm}
+
+__Confidence__
+```{r tidy=TRUE}
+confidence<-100 * sum(diag(mc)) / sum(mc)
+confidence
+
+```
+```{r include=FALSE}
+if (ind_ml=="ALL") {
+dfconfidence1[dfconfidence1$patients==paciente,c("knn_3")]<-confidence
+dfvar1<-rbind(dfvar1,data.frame(patient=pt,algorithm="knn_3",variables=ncol(datos.entreno.alg.knn),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+} else {
+dfconfidence2[dfconfidence2$patients==paciente,c("knn_3")]<-confidence
+dfvar2<-rbind(dfvar2,data.frame(patient=pt,algorithm="knn_3",variables=ncol(datos.entreno.alg.knn),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))  
+  
+}
+```
+\pagebreak

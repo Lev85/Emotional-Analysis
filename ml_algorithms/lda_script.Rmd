@@ -1,0 +1,57 @@
+---
+title: "LDA"
+author: "Pavel"
+date: "22 de marzo de 2020"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+---
+
+# Linear Discriminant Analysis
+
+```{r tidy=TRUE, include=FALSE}
+confidence<-NA
+datos.entreno.alg<-datos.entreno
+datos.test.alg<-datos.test
+```
+
+__Creating model__
+\vspace{10mm}
+```{r tidy=TRUE}
+formula<-as.formula(paste0(var_diagnosis,"~."))
+(modelo_lda<-lda(formula,data=datos.entreno.alg))
+```
+\vspace{10mm}
+
+__Performing predictions__
+\vspace{10mm}
+```{r tidy=TRUE}
+predicciones <- predict(modelo_lda, datos.test.alg)
+predicciones
+```
+\vspace{10mm}
+
+__Confusion matrix__
+\vspace{10mm}
+```{r tidy=TRUE}
+#(mc <- with(datos.test.alg,table(predicciones$class, diagnosis)))
+(mc<-table(predicciones$class,datos.test.alg[[var_diagnosis]]))
+```
+\vspace{10mm}
+
+__Confidence__
+\vspace{10mm}
+```{r tidy=TRUE}
+confidence<-100 * sum(diag(mc)) / sum(mc)
+confidence
+```
+```{r include=FALSE}
+if (ind_ml=="ALL") {
+dfconfidence1[dfconfidence1$patients==paciente,c("lda")]<-confidence
+dfvar1<-rbind(dfvar1,data.frame(patient=pt,algorithm="lda",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+} else {
+dfconfidence2[dfconfidence2$patients==paciente,c("lda")]<-confidence
+dfvar2<-rbind(dfvar2,data.frame(patient=pt,algorithm="lda",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+}
+```
+\pagebreak

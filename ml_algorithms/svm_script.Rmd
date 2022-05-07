@@ -1,0 +1,71 @@
+---
+title: "svm"
+author: "Pavel"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+date: "22 de marzo de 2020"
+---
+
+# SVM Analysis
+```{r include=FALSE}
+confidence<-NA
+datos.entreno.alg<-datos.entreno
+datos.test.alg<-datos.test
+```
+
+__Support Vector Machine algorithm needs the target variable to be numeric__
+```{r tidy=TRUE}
+datos.entreno.alg[[var_diagnosis]]<-as.numeric(as.factor(datos.entreno.alg[[var_diagnosis]]))
+datos.test.alg[[var_diagnosis]]<-as.numeric(as.factor(datos.test.alg[[var_diagnosis]]))
+```
+\vspace{10mm}
+
+
+__Creating model__
+
+```{r tidy=TRUE}
+formula<-as.formula(paste0(var_diagnosis,"~."))
+modelo_svm<-svm(formula,data=datos.entreno.alg,type='C-classification',kernel='linear')
+modelo_svm  
+```
+\vspace{10mm}
+
+__Performing predictions__
+```{r tidy=TRUE}
+predictions <- predict(modelo_svm, datos.test.alg)
+predictions
+```
+\vspace{10mm}
+
+
+__Confusion matrix__
+```{r tidy=TRUE}
+(mc<-table(predictions,datos.test.alg[[var_diagnosis]]))
+```
+\vspace{10mm}
+
+
+__Confidence__
+```{r tidy=TRUE}
+confidence<-100 * sum(diag(mc)) / sum(mc)
+confidence
+```
+\pagebreak
+
+
+```{r include=FALSE}
+
+if (ind_ml=="ALL") {
+
+dfconfidence1[dfconfidence1$patients==paciente,c("svm")]<-confidence
+dfvar1<-rbind(dfvar1,data.frame(patient=pt,algorithm="svm",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+
+} else {
+  
+dfconfidence2[dfconfidence2$patients==paciente,c("svm")]<-confidence
+dfvar2<-rbind(dfvar2,data.frame(patient=pt,algorithm="svm",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+  
+  
+}
+```

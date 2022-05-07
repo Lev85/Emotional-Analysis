@@ -1,0 +1,80 @@
+---
+title: "logistic discrimination"
+author: "Pavel"
+date: "28 de marzo de 2020"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+---
+
+# Logistic Discrimination Analysis
+
+```{r include=FALSE}
+confidence<-NA
+datos.entreno.alg<-datos.entreno
+datos.test.alg<-datos.test
+```
+
+
+```{r include=FALSE}
+#if (paciente=="MAPI"){
+#datos.entreno.alg<- datos.MAPI
+#datos.test.alg <- datos.MAPI
+#}
+
+
+if (paciente=="MAPI" | paciente=="CASGA"){
+datos.entreno.alg<- rbind(datos.entreno,datos.test)
+datos.test.alg <- rbind(datos.entreno,datos.test)
+}
+```
+
+__Logistic Discriminant algorithm needs matrix as inputs. It also needs the target variable to be inputed as a vector in a different parameter__
+```{r tidy=TRUE}
+#datos.entreno.alg.ld<-datos.entreno.alg[,-17]
+datos.entreno.alg.ld<-datos.entreno.alg[ , -which(names(datos.entreno.alg) %in% var_diagnosis)]
+datos.entreno.alg.ld<-as.matrix(datos.entreno.alg.ld)
+targ<-datos.entreno.alg[[var_diagnosis]]
+
+#datos.test.alg.ld<-datos.test.alg[,-17]
+datos.test.alg.ld<-datos.test.alg[ , -which(names(datos.test.alg) %in% var_diagnosis)]
+datos.test.alg.ld<-as.matrix(datos.test.alg.ld)
+```
+
+__Creating model__
+```{r tidy=TRUE}
+(modelo_ld<-cv.glmnet(datos.entreno.alg.ld,targ,family='multinomial', type.measure='class', nfolds=148))
+```
+\vspace{10mm}
+
+__Performing predictions__
+```{r tidy=TRUE}
+predicciones <- predict(modelo_ld, datos.test.alg.ld,s="lambda.min", type = "class")
+predicciones
+```
+\vspace{10mm}
+
+__Confusion matrix__
+```{r tidy=TRUE}
+(mc<-table(predicciones,datos.test.alg[[var_diagnosis]]))
+```
+\vspace{10mm}
+
+__Confidence__
+```{r tidy=TRUE}
+confidence<-100 * sum(diag(mc)) / sum(mc)
+confidence
+```
+
+```{r include=FALSE}
+
+if (ind_ml=="ALL") {
+dfconfidence1[dfconfidence1$patients==paciente,c("log_disc")]<-confidence
+dfvar1<-rbind(dfvar1,data.frame(patient=pt,algorithm="log_disc",variables=ncol(datos.entreno.alg.ld),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+} else {
+dfconfidence2[dfconfidence2$patients==paciente,c("log_disc")]<-confidence
+dfvar2<-rbind(dfvar2,data.frame(patient=pt,algorithm="log_disc",variables=ncol(datos.entreno.alg.ld),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))  
+  
+}
+```
+\pagebreak

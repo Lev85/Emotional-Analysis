@@ -1,0 +1,53 @@
+---
+title: "Decision Tree"
+author: "Pavel"
+date: "25 de marzo de 2020"
+output:
+  word_document:
+    reference_docx: templateStyles.docx
+---
+# Decision Tree Analysis
+
+```{r tidy=TRUE, include=FALSE}
+confidence<-NA
+datos.entreno.alg<-datos.entreno
+datos.test.alg<-datos.test
+```
+
+__Creating model__
+```{r tidy=TRUE}
+formula<-as.formula(paste0(var_diagnosis,"~."))
+(modelo_dt<-rpart(formula,data=datos.entreno.alg,method='class'))
+```
+
+\vspace{10mm}
+
+__Performing predictions__
+```{r tidy=TRUE}
+predicciones <- predict(modelo_dt, datos.test.alg,type='class')
+predicciones
+```
+\vspace{10mm}
+
+__Confusion matrix__
+```{r tidy=TRUE}
+(mc<-table(predicciones,datos.test.alg[[var_diagnosis]]))
+```
+\vspace{10mm}
+
+__Confidence__
+```{r tidy=TRUE}
+confidence<-100 * sum(diag(mc)) / sum(mc)
+confidence
+```
+
+```{r include=FALSE}
+if (ind_ml=="ALL") {
+dfconfidence1[dfconfidence1$patients==paciente,c("dec_tree")]<-confidence
+dfvar1<-rbind(dfvar1,data.frame(patient=pt,algorithm="dec_tree",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+} else {
+dfconfidence2[dfconfidence2$patients==paciente,c("dec_tree")]<-confidence
+dfvar2<-rbind(dfvar2,data.frame(patient=pt,algorithm="dec_tree",variables=ncol(datos.entreno.alg),obs.train=nrow(datos.entreno.alg),obs.test=nrow(datos.test.alg),states=paste(unique(datos.entreno$E_diagnosis),collapse=",")))
+}
+```
+\pagebreak
