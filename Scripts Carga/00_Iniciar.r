@@ -1,11 +1,12 @@
 library (readxl)
-library (imputeTS)
-library (outliers)
+library (imputeTS) #na.interpolation
+library (outliers) #rm.outlier
 library (scales)
-library (lubridate)
-library (data.table)
-library (zoo)
-library (dplyr)
+library (lubridate) #week
+library (data.table) #rbindlist (01_02_Carga_pulsera.r)
+library (zoo) #na.locf (el arrastre)
+library (stringr)
+#library (dplyr)
 
 path_scripts<-"D:/Proyectos/Pavel_MoodDisorders/Scripts Carga/"
 
@@ -38,7 +39,7 @@ cat("Empiezo a cargar datos\n")
 script_continuos<-"01_Carga_continuos.r"
 source(paste0(path_scripts,script_continuos))
 cat("Termino de cargar continuos\n")
-
+#stop()
 script_discretos<-"02_Carga_discretos.r"
 source(paste0(path_scripts,script_discretos))
 cat("Termino de cargar discretos\n")
@@ -74,6 +75,11 @@ if (foj_cont_and_disc_and_dx) {
 script_rename<-"renaming.r"
 source(paste0(path_scripts,script_rename))
 
+cat("Genero nuevos códigos de pcientes\n")
+#Nuevos códigos de pacientes
+dftotal$A_newid<-paste0("CDPT",str_pad(as.numeric(as.factor(dftotal$A_id)),3,side=c("left"),pad="0"))
+
+
 
 colnamesdftotal<-colnames(dftotal)
 
@@ -91,6 +97,9 @@ dn1<-scale(dn1)
 dn2<-dftotal[, ! names(dftotal) %in% colnames(dn1)]
 dftotal<-cbind(dn2,dn1)
 }
+
+
+
 #print(nrow(unique(dftotal[dftotal$A_id=="GIUS",c("A_date","S_Nbouts_day_IN_bts_1_10")])))
 #dx3<-unique(dftotal[dftotal$A_id=="GIUS",c("A_date","S_Nbouts_day_IN_bts_1_10")])
 #stop()
